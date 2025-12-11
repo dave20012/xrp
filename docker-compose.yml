@@ -1,39 +1,59 @@
 version: "3.9"
 services:
   api:
-    build:
-      context: .
-      dockerfile: services/api/Dockerfile
+    build: .
     command: uvicorn services.api.main:app --host 0.0.0.0 --port 8000
-    env_file:
-      - .env
+    environment:
+      - BINANCE_API_KEY=${BINANCE_API_KEY}
+      - BINANCE_API_SECRET=${BINANCE_API_SECRET}
+      - BINANCE_WS_URL=${BINANCE_WS_URL}
+      - BINANCE_REST_URL=${BINANCE_REST_URL}
+      - XRPL_RPC_URL=${XRPL_RPC_URL}
+      - XRPL_WS_URL=${XRPL_WS_URL}
+      - XRPL_DATA_API=${XRPL_DATA_API}
+      - NEWSAPI_KEY=${NEWSAPI_KEY}
+      - NEWSAPI_ENDPOINT=${NEWSAPI_ENDPOINT}
+      - BTC_MARKET_FEED_URL=${BTC_MARKET_FEED_URL}
+      - ETH_MARKET_FEED_URL=${ETH_MARKET_FEED_URL}
+      - DATABASE_URL=${DATABASE_URL}
+      - REDIS_URL=${REDIS_URL}
+      - MAX_POSITION_PCT=${MAX_POSITION_PCT}
+      - MAX_DRAWDOWN_PCT=${MAX_DRAWDOWN_PCT}
+      - STOP_MULTIPLIER=${STOP_MULTIPLIER}
+      - TAKE_PROFIT_MULTIPLIER=${TAKE_PROFIT_MULTIPLIER}
+      - ENV=${ENV}
+      - LOG_LEVEL=${LOG_LEVEL}
+      - PUBLIC_API_BASE_URL=${PUBLIC_API_BASE_URL}
     ports:
       - "8000:8000"
     depends_on:
       - redis
-      - postgres
   signal-worker:
-    build:
-      context: .
-      dockerfile: services/signal_worker/Dockerfile
+    build: .
     command: python -m services.signal_worker.main
-    env_file:
-      - .env
+    environment:
+      - BINANCE_API_KEY=${BINANCE_API_KEY}
+      - BINANCE_API_SECRET=${BINANCE_API_SECRET}
+      - BINANCE_WS_URL=${BINANCE_WS_URL}
+      - BINANCE_REST_URL=${BINANCE_REST_URL}
+      - XRPL_RPC_URL=${XRPL_RPC_URL}
+      - XRPL_WS_URL=${XRPL_WS_URL}
+      - XRPL_DATA_API=${XRPL_DATA_API}
+      - NEWSAPI_KEY=${NEWSAPI_KEY}
+      - NEWSAPI_ENDPOINT=${NEWSAPI_ENDPOINT}
+      - BTC_MARKET_FEED_URL=${BTC_MARKET_FEED_URL}
+      - ETH_MARKET_FEED_URL=${ETH_MARKET_FEED_URL}
+      - DATABASE_URL=${DATABASE_URL}
+      - REDIS_URL=${REDIS_URL}
+      - MAX_POSITION_PCT=${MAX_POSITION_PCT}
+      - MAX_DRAWDOWN_PCT=${MAX_DRAWDOWN_PCT}
+      - STOP_MULTIPLIER=${STOP_MULTIPLIER}
+      - TAKE_PROFIT_MULTIPLIER=${TAKE_PROFIT_MULTIPLIER}
+      - ENV=${ENV}
+      - LOG_LEVEL=${LOG_LEVEL}
+      - PUBLIC_API_BASE_URL=${PUBLIC_API_BASE_URL}
     depends_on:
       - redis
-      - postgres
-  backtesting:
-    build:
-      context: .
-      dockerfile: services/backtesting/Dockerfile
-    command: python -m services.backtesting.main
-    env_file:
-      - .env
-    ports:
-      - "8010:8000"
-    depends_on:
-      - redis
-      - postgres
   redis:
     image: redis:7
     ports:
