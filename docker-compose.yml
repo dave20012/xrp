@@ -1,0 +1,68 @@
+version: "3.9"
+services:
+  api:
+    build: .
+    command: uvicorn services.api.main:app --host 0.0.0.0 --port 8000
+    environment:
+      - BINANCE_API_KEY=${BINANCE_API_KEY}
+      - BINANCE_API_SECRET=${BINANCE_API_SECRET}
+      - BINANCE_WS_URL=${BINANCE_WS_URL}
+      - BINANCE_REST_URL=${BINANCE_REST_URL}
+      - XRPL_RPC_URL=${XRPL_RPC_URL}
+      - XRPL_WS_URL=${XRPL_WS_URL}
+      - XRPL_DATA_API=${XRPL_DATA_API}
+      - NEWSAPI_KEY=${NEWSAPI_KEY}
+      - NEWSAPI_ENDPOINT=${NEWSAPI_ENDPOINT}
+      - BTC_MARKET_FEED_URL=${BTC_MARKET_FEED_URL}
+      - ETH_MARKET_FEED_URL=${ETH_MARKET_FEED_URL}
+      - DATABASE_URL=${DATABASE_URL}
+      - REDIS_URL=${REDIS_URL}
+      - MAX_POSITION_PCT=${MAX_POSITION_PCT}
+      - MAX_DRAWDOWN_PCT=${MAX_DRAWDOWN_PCT}
+      - STOP_MULTIPLIER=${STOP_MULTIPLIER}
+      - TAKE_PROFIT_MULTIPLIER=${TAKE_PROFIT_MULTIPLIER}
+      - ENV=${ENV}
+      - LOG_LEVEL=${LOG_LEVEL}
+      - PUBLIC_API_BASE_URL=${PUBLIC_API_BASE_URL}
+    ports:
+      - "8000:8000"
+    depends_on:
+      - redis
+  signal-worker:
+    build: .
+    command: python -m services.signal_worker.main
+    environment:
+      - BINANCE_API_KEY=${BINANCE_API_KEY}
+      - BINANCE_API_SECRET=${BINANCE_API_SECRET}
+      - BINANCE_WS_URL=${BINANCE_WS_URL}
+      - BINANCE_REST_URL=${BINANCE_REST_URL}
+      - XRPL_RPC_URL=${XRPL_RPC_URL}
+      - XRPL_WS_URL=${XRPL_WS_URL}
+      - XRPL_DATA_API=${XRPL_DATA_API}
+      - NEWSAPI_KEY=${NEWSAPI_KEY}
+      - NEWSAPI_ENDPOINT=${NEWSAPI_ENDPOINT}
+      - BTC_MARKET_FEED_URL=${BTC_MARKET_FEED_URL}
+      - ETH_MARKET_FEED_URL=${ETH_MARKET_FEED_URL}
+      - DATABASE_URL=${DATABASE_URL}
+      - REDIS_URL=${REDIS_URL}
+      - MAX_POSITION_PCT=${MAX_POSITION_PCT}
+      - MAX_DRAWDOWN_PCT=${MAX_DRAWDOWN_PCT}
+      - STOP_MULTIPLIER=${STOP_MULTIPLIER}
+      - TAKE_PROFIT_MULTIPLIER=${TAKE_PROFIT_MULTIPLIER}
+      - ENV=${ENV}
+      - LOG_LEVEL=${LOG_LEVEL}
+      - PUBLIC_API_BASE_URL=${PUBLIC_API_BASE_URL}
+    depends_on:
+      - redis
+  redis:
+    image: redis:7
+    ports:
+      - "6379:6379"
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_DB: xrp
+    ports:
+      - "5432:5432"
